@@ -6,4 +6,17 @@ const formularioRegistro = (req, res) => {
   res.json({ msg: 'registro' });
 };
 
-export { formularioLogin, formularioRegistro };
+const formularioOlvidePassword = (req, res) => {
+  res.json({ msg: 'Olvido password' });
+};
+
+const registrar = (req, res) => {
+  res.json({ msg: 'Registrandoo..' });
+};
+
+export {
+  formularioLogin,
+  formularioRegistro,
+  registrar,
+  formularioOlvidePassword,
+};
