@@ -1,3 +1,5 @@
+import Usuario from '../models/Usuario.js';
+
 const formularioLogin = (req, res) => {
   res.json({ msg: 'login' });
 };
@@ -19,7 +21,7 @@ const formularioOlvidePassword = (req, res) => {
 //   });
 // };
 
-const registrar = (req, res) => {
+const registrar = async (req, res) => {
   const datos = req.body;
 
   // Verificar si el cuerpo de la solicitud está vacío
@@ -29,11 +31,22 @@ const registrar = (req, res) => {
     });
   }
 
-  // Si los datos existen, enviarlos como respuesta
-  res.json({
-    message: 'Datos recibidos correctamente',
-    data: datos,
-  });
+  try {
+    // Crear el usuario en la base de datos
+    const usuario = await Usuario.create(req.body);
+
+    // Enviar la respuesta con el usuario creado
+    res.json({
+      message: 'Usuario registrado correctamente',
+      data: usuario,
+    });
+  } catch (error) {
+    // Manejar errores en la creación del usuario
+    res.status(500).json({
+      error: 'Ocurrió un error al registrar el usuario',
+      details: error.message,
+    });
+  }
 };
 
 export {

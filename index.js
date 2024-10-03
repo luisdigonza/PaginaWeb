@@ -11,6 +11,7 @@ app.use(express.json());
 // Conexion a la base de datos
 try {
   await db.authenticate();
+  db.sync();
   console.log('conexion correcta a la base de datos');
 } catch (error) {
   console.log(error);
