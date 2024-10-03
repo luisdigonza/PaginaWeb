@@ -1,3 +1,5 @@
+import { check, validationResult } from 'express-validator';
+
 import Usuario from '../models/Usuario.js';
 
 const formularioLogin = (req, res) => {
@@ -12,31 +14,56 @@ const formularioOlvidePassword = (req, res) => {
   res.json({ msg: 'Olvido password' });
 };
 
-// const registrar = (req, res) => {
-//   const datos = req.body;
-//   // Enviar los datos como respuesta en formato JSON
-//   res.json({
-//     message: 'Datos recibidos correctamente',
-//     data: datos,
-//   });
-// };
-
 const registrar = async (req, res) => {
-  const datos = req.body;
+  // Validaciones
+  await check('nombre')
+    .notEmpty()
+    .withMessage('El nombre no puede ir vacío')
+    .run(req);
 
-  // Verificar si el cuerpo de la solicitud está vacío
-  if (!datos || Object.keys(datos).length === 0) {
+  await check('email').isEmail().withMessage('Eso no parece un email').run(req);
+
+  await check('password')
+    .isLength({ min: 6 })
+    .withMessage('El password debe ser al menos 6 caracteres')
+    .run(req);
+
+  await check('repetirPassword')
+    .equals(req.body.password)
+    .withMessage('Las passwords no son iguales')
+    .run(req);
+
+  let resultado = validationResult(req);
+
+  // Verificar si hay errores de validación
+  if (!resultado.isEmpty()) {
     return res.status(400).json({
-      error: 'No se recibieron datos en la solicitud',
+      errores: resultado.array(),
     });
   }
 
-  try {
-    // Crear el usuario en la base de datos
-    const usuario = await Usuario.create(req.body);
+  // Extraer datos
+  const { nombre, email, password } = req.body;
 
-    // Enviar la respuesta con el usuario creado
-    res.json({
+  try {
+    // Verificar que el usuario no esté registrado
+    const existeUsuario = await Usuario.findOne({ where: { email } });
+
+    if (existeUsuario) {
+      return res.status(400).json({
+        error: 'El usuario ya está registrado',
+      });
+    }
+
+    // Almacenar un usuario
+    const usuario = await Usuario.create({
+      nombre,
+      email,
+      password,
+    });
+
+    // Responder con el usuario creado
+    res.status(201).json({
       message: 'Usuario registrado correctamente',
       data: usuario,
     });
