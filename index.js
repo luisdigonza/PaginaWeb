@@ -5,6 +5,9 @@ import db from './config/db.js';
 // Crear la app
 const app = express();
 
+// Middleware para procesar JSON
+app.use(express.json());
+
 // Conexion a la base de datos
 try {
   await db.authenticate();
