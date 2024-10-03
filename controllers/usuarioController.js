@@ -6,6 +6,10 @@ const formularioLogin = (req, res) => {
   res.json({ msg: 'login' });
 };
 
+const auntenticar = (req, res) => {
+  res.json({ msg: 'login' });
+};
+
 const formularioRegistro = (req, res) => {
   res.json({ msg: 'registro' });
 };
@@ -78,6 +82,7 @@ const registrar = async (req, res) => {
 
 export {
   formularioLogin,
+  auntenticar,
   formularioRegistro,
   registrar,
   formularioOlvidePassword,
