@@ -1,9 +1,9 @@
 const formularioLogin = (req, res) => {
-  res.json('auth/login', { msg: 'login' });
+  res.json({ msg: 'login' });
 };
 
 const formularioRegistro = (req, res) => {
-  res.json('auth/registro', { msg: 'registro' });
+  res.json({ msg: 'registro' });
 };
 
 export { formularioLogin, formularioRegistro };
