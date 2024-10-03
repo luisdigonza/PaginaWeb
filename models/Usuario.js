@@ -16,4 +16,9 @@ const Usuario = db.define('usuarios', {
   },
 });
 
+// Agregar el método para verificar la contraseña
+Usuario.prototype.verificarPassword = function (password) {
+  return this.password === password; // Compara directamente
+};
+
 export default Usuario;

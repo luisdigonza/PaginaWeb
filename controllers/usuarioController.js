@@ -6,8 +6,49 @@ const formularioLogin = (req, res) => {
   res.json({ msg: 'login' });
 };
 
-const auntenticar = (req, res) => {
-  res.json({ msg: 'login' });
+const autenticar = async (req, res) => {
+  await check('email')
+    .isEmail()
+    .withMessage('El email es obligatorio')
+    .run(req);
+
+  await check('password')
+    .notEmpty()
+    .withMessage('El password es obligatorio')
+    .run(req);
+
+  let resultado = validationResult(req);
+
+  // Verificar que el resultado esté vacío
+  if (!resultado.isEmpty()) {
+    // Errores
+    return res.status(400).json({
+      errores: resultado.array(),
+    });
+  }
+
+  const { email, password } = req.body;
+
+  // Confirmar si el usuario existe
+  const usuario = await Usuario.findOne({ where: { email } });
+
+  if (!usuario) {
+    return res.status(404).json({
+      error: 'El usuario no existe',
+    });
+  }
+
+  // Revisar la contraseña
+  if (!usuario.verificarPassword(password)) {
+    return res.status(401).json({
+      error: 'El password es incorrecto',
+    });
+  }
+
+  // Permitir acceso
+  return res.status(200).json({
+    message: 'Has iniciado sesión',
+  });
 };
 
 const formularioRegistro = (req, res) => {
@@ -82,7 +123,7 @@ const registrar = async (req, res) => {
 
 export {
   formularioLogin,
-  auntenticar,
+  autenticar,
   formularioRegistro,
   registrar,
   formularioOlvidePassword,
